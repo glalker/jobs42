@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "jobs42",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["src/cli.ts", "serve"],
+      "port": 4242
+    }
+  ]
+}

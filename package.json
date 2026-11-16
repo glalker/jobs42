@@ -1,0 +1,19 @@
+{
+  "name": "jobs42",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live Go/Java job feed with a liveness score, built as an MVP feature for WOW42",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "coverage": "node --test --experimental-test-coverage \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "ingest": "node src/cli.ts ingest",
+    "serve": "node src/cli.ts serve"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
