@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { loadCompanies } from './companies.ts';
+import { exportStaticSite } from './export.ts';
 import { fetchJson } from './http.ts';
 import { runIngest } from './ingest.ts';
 import { createBoardFetcher } from './sources/index.ts';
@@ -15,6 +16,7 @@ const DEFAULT_INGEST_INTERVAL_HOURS = 4;
 const USAGE = `Usage:
   node src/cli.ts ingest   read every company board once and update the database
   node src/cli.ts serve    serve the feed and re-read the boards on a schedule
+  node src/cli.ts export   write a static snapshot of the feed to docs/ (for GitHub Pages)
 
 Environment:
   JOBS42_DB               database file (default data/jobs42.db)
@@ -104,7 +106,7 @@ function serve(config: Config, db: Db): void {
 }
 
 async function main(command: string | undefined): Promise<void> {
-  if (command !== 'ingest' && command !== 'serve') {
+  if (command !== 'ingest' && command !== 'serve' && command !== 'export') {
     process.stdout.write(`${USAGE}\n`);
     process.exitCode = command === undefined ? 0 : 1;
     return;
@@ -113,6 +115,12 @@ async function main(command: string | undefined): Promise<void> {
   const db = openConfiguredDatabase(config);
   if (command === 'ingest') {
     await ingest(config, db);
+    return;
+  }
+  if (command === 'export') {
+    const outDir = process.env.JOBS42_EXPORT_DIR ?? 'docs';
+    const result = exportStaticSite({ db, outDir, now: new Date().toISOString(), prepUrlTemplate: config.prepUrlTemplate });
+    log(`Wrote ${result.jobs} postings to ${outDir}/`);
     return;
   }
   serve(config, db);

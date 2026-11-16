@@ -10,7 +10,8 @@
     "coverage": "node --test --experimental-test-coverage \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "ingest": "node src/cli.ts ingest",
-    "serve": "node src/cli.ts serve"
+    "serve": "node src/cli.ts serve",
+    "export": "node src/cli.ts export"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
