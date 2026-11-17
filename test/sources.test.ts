@@ -109,9 +109,17 @@ test('parseAshby maps a posting, its extra locations and its pay range', () => {
 test('a posting that cannot be read fails the whole board instead of being dropped', () => {
   const valid = { id: 1, title: 'Engineer', absolute_url: 'https://x.test/1' };
 
-  assert.throws(() => parseGreenhouse(company('greenhouse'), { jobs: [valid, { id: 2, title: 'No link' }] }), /Malformed posting/);
-  assert.throws(() => parseLever(company('lever'), ['garbage']), /Malformed posting/);
-  assert.throws(() => parseAshby(company('ashby'), { jobs: [{ id: 'x', name: 'renamed field' }] }), /Malformed posting/);
+  assert.throws(() => parseGreenhouse(company('greenhouse'), { jobs: [valid, { id: 2, title: 'No link' }] }), /Malformed postings/);
+  assert.throws(() => parseLever(company('lever'), ['garbage']), /Malformed postings/);
+  assert.throws(() => parseAshby(company('ashby'), { jobs: [{ id: 'x', name: 'renamed field' }] }), /Malformed postings/);
+});
+
+test('a few unreadable postings are skipped while the rest of the board is kept', () => {
+  const valid = (id: number) => ({ id, title: 'Engineer', absolute_url: `https://x.test/${id}` });
+
+  const jobs = parseGreenhouse(company('greenhouse'), { jobs: [valid(1), valid(2), valid(3), { id: 4, title: 'No link' }] });
+
+  assert.deepEqual(jobs.map((job) => job.externalId), ['1', '2', '3']);
 });
 
 test('parsers reject a payload of the wrong shape instead of reporting an empty board', () => {

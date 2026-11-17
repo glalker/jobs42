@@ -1,3 +1,5 @@
+import type { RawJob } from '../types.ts';
+
 export type JsonObject = Readonly<Record<string, unknown>>;
 
 export function asObject(value: unknown): JsonObject | null {
@@ -27,6 +29,19 @@ export function toIsoDate(value: unknown): string | null {
   return Number.isFinite(time) ? new Date(time).toISOString() : null;
 }
 
-export function isDefined<T>(value: T | null): value is T {
-  return value !== null;
+/** Marks a posting entry that lacks an id, title or link. */
+export const MALFORMED = Symbol('malformed');
+export type ParsedEntry = RawJob | null | typeof MALFORMED;
+
+/**
+ * Keeps the readable postings. A few broken entries are skipped, but when at least half are broken the
+ * format has probably changed, and the read fails so the board's postings are not closed by mistake.
+ */
+export function collectJobs(label: string, entries: readonly unknown[], parse: (entry: unknown) => ParsedEntry): readonly RawJob[] {
+  const results = entries.map(parse);
+  const malformed = results.filter((result) => result === MALFORMED).length;
+  if (malformed > 0 && malformed * 2 >= entries.length) {
+    throw new Error(`Malformed postings in ${label}: ${malformed} of ${entries.length}`);
+  }
+  return results.filter((result): result is RawJob => result !== null && result !== MALFORMED);
 }

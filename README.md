@@ -52,6 +52,29 @@ publication date and under 14 days of history gets no verdict.
 | `/api/jobs/:id` | Posting with `events` |
 | `/healthz` | Counts and the time of the last board read |
 
+## Company hiring report (sales leads)
+
+```bash
+npm run discover   # look up boards for the names in discovery/candidates.txt, add them to companies.json
+npm run ingest     # INGEST_CONCURRENCY=8 speeds it up for a long list
+npm run report     # writes reports/leads.csv (git-ignored)
+```
+
+One row per company with at least 3 open US Go/Java roles:
+
+| Column | Meaning |
+|---|---|
+| `segment` | Company size by all open roles on its board: small (<100), mid (100-299), large (300+) |
+| `go_java_open`, `go_open`, `java_open` | Open US roles naming Go or Java |
+| `new_30d` | Published in the last 30 days: budget and active hiring |
+| `open_90_365d` | Open 3-12 months: roles they struggle to fill |
+| `open_365d_plus` | Open over a year: usually evergreen pipelines, not counted in the score |
+| `reposted` | Taken down and posted again under a new link |
+| `score` | `new_30d × 2 + open_90_365d + reposted × 3` |
+
+Cells that would start a spreadsheet formula are prefixed with a quote. Repost counts only build up after
+several weeks of regular runs.
+
 ## Not done yet
 
 - The prep link is `https://wow42.tech/?job=<posting URL>` by default. WOW42 does not handle that parameter

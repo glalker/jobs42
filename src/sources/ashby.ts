@@ -1,5 +1,6 @@
 import type { Company, RawJob } from '../types.ts';
-import { asArray, asObject, asText, isDefined, textList, toIsoDate } from './parse.ts';
+import { MALFORMED, asArray, asObject, asText, collectJobs, textList, toIsoDate } from './parse.ts';
+import type { ParsedEntry } from './parse.ts';
 
 export function ashbyUrl(token: string): string {
   return `https://api.ashbyhq.com/posting-api/job-board/${token}?includeCompensation=true`;
@@ -9,16 +10,13 @@ function countryOf(value: unknown): unknown {
   return asObject(asObject(asObject(value)?.address)?.postalAddress)?.addressCountry;
 }
 
-function parseJob(company: Company, value: unknown): RawJob | null {
+function parseJob(company: Company, value: unknown): ParsedEntry {
   const job = asObject(value);
   const externalId = asText(job?.id);
   const title = asText(job?.title);
   const url = asText(job?.jobUrl);
   if (job?.isListed === false) return null;
-  if (job === null || externalId === null || title === null || url === null) {
-    // Dropping a posting we cannot read would look like the company closed it, so the whole read fails instead.
-    throw new Error(`Malformed posting in Ashby response for ${company.token}`);
-  }
+  if (job === null || externalId === null || title === null || url === null) return MALFORMED;
   const secondary = asArray(job.secondaryLocations);
   const compensation = asObject(job.compensation);
   return {
@@ -43,5 +41,5 @@ export function parseAshby(company: Company, payload: unknown): readonly RawJob[
   if (!Array.isArray(jobs)) {
     throw new Error(`Unexpected Ashby response for ${company.token}`);
   }
-  return jobs.map((job) => parseJob(company, job)).filter(isDefined);
+  return collectJobs(`Ashby response for ${company.token}`, jobs, (job) => parseJob(company, job));
 }

@@ -1,6 +1,7 @@
 import { htmlToText } from '../text.ts';
 import type { Company, RawJob } from '../types.ts';
-import { asArray, asObject, asText, isDefined, textList, toIsoDate } from './parse.ts';
+import { MALFORMED, asArray, asObject, asText, collectJobs, textList, toIsoDate } from './parse.ts';
+import type { ParsedEntry } from './parse.ts';
 import type { JsonObject } from './parse.ts';
 
 export function leverUrl(token: string): string {
@@ -24,15 +25,12 @@ function formatSalary(value: unknown): string | null {
   return currency === 'USD' ? `$${amount(min)} - $${amount(max)}` : `${amount(min)} - ${amount(max)} ${currency}`;
 }
 
-function parseJob(company: Company, value: unknown): RawJob | null {
+function parseJob(company: Company, value: unknown): ParsedEntry {
   const job = asObject(value);
   const externalId = asText(job?.id);
   const title = asText(job?.text);
   const url = asText(job?.hostedUrl);
-  if (job === null || externalId === null || title === null || url === null) {
-    // Dropping a posting we cannot read would look like the company closed it, so the whole read fails instead.
-    throw new Error(`Malformed posting in Lever response for ${company.token}`);
-  }
+  if (job === null || externalId === null || title === null || url === null) return MALFORMED;
   const categories = asObject(job.categories);
   const allLocations = textList(asArray(categories?.allLocations));
   return {
@@ -55,5 +53,5 @@ export function parseLever(company: Company, payload: unknown): readonly RawJob[
   if (!Array.isArray(payload)) {
     throw new Error(`Unexpected Lever response for ${company.token}`);
   }
-  return payload.map((job) => parseJob(company, job)).filter(isDefined);
+  return collectJobs(`Lever response for ${company.token}`, payload, (job) => parseJob(company, job));
 }

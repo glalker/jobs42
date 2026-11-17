@@ -1,20 +1,18 @@
 import { htmlToText } from '../text.ts';
 import type { Company, RawJob } from '../types.ts';
-import { asArray, asObject, asText, isDefined, textList, toIsoDate } from './parse.ts';
+import { MALFORMED, asArray, asObject, asText, collectJobs, textList, toIsoDate } from './parse.ts';
+import type { ParsedEntry } from './parse.ts';
 
 export function greenhouseUrl(token: string): string {
   return `https://boards-api.greenhouse.io/v1/boards/${token}/jobs?content=true`;
 }
 
-function parseJob(company: Company, value: unknown): RawJob | null {
+function parseJob(company: Company, value: unknown): ParsedEntry {
   const job = asObject(value);
   const externalId = asText(job?.id);
   const title = asText(job?.title);
   const url = asText(job?.absolute_url);
-  if (job === null || externalId === null || title === null || url === null) {
-    // Dropping a posting we cannot read would look like the company closed it, so the whole read fails instead.
-    throw new Error(`Malformed posting in Greenhouse response for ${company.token}`);
-  }
+  if (job === null || externalId === null || title === null || url === null) return MALFORMED;
   const officeLocations = asArray(job.offices).map((office) => asObject(office)?.location);
   return {
     source: 'greenhouse',
@@ -37,5 +35,5 @@ export function parseGreenhouse(company: Company, payload: unknown): readonly Ra
   if (!Array.isArray(jobs)) {
     throw new Error(`Unexpected Greenhouse response for ${company.token}`);
   }
-  return jobs.map((job) => parseJob(company, job)).filter(isDefined);
+  return collectJobs(`Greenhouse response for ${company.token}`, jobs, (job) => parseJob(company, job));
 }

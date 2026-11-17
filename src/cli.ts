@@ -1,9 +1,11 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { loadCompanies } from './companies.ts';
+import { discoverBoards, mergeCompanies, parseNameList } from './discover.ts';
 import { exportStaticSite } from './export.ts';
 import { fetchJson } from './http.ts';
 import { runIngest } from './ingest.ts';
+import { buildLeadReport, toCsv } from './report.ts';
 import { createBoardFetcher } from './sources/index.ts';
 import { getStats } from './store/read.ts';
 import { openDatabase } from './store/schema.ts';
@@ -12,11 +14,15 @@ import { createApp } from './web/server.ts';
 
 const MS_PER_HOUR = 3_600_000;
 const DEFAULT_PORT = 4242;
+const DEFAULT_INGEST_CONCURRENCY = 4;
+const COMMANDS: ReadonlySet<string> = new Set(['ingest', 'serve', 'export', 'discover', 'report']);
 const DEFAULT_INGEST_INTERVAL_HOURS = 4;
 const USAGE = `Usage:
   node src/cli.ts ingest   read every company board once and update the database
   node src/cli.ts serve    serve the feed and re-read the boards on a schedule
   node src/cli.ts export   write a static snapshot of the feed to docs/ (for GitHub Pages)
+  node src/cli.ts discover <names.txt>   find boards for company names and add them to the company list
+  node src/cli.ts report   write the company hiring report (default reports/leads.csv)
 
 Environment:
   JOBS42_DB               database file (default data/jobs42.db)
@@ -31,6 +37,7 @@ interface Config {
   readonly port: number;
   readonly host: string;
   readonly ingestIntervalHours: number;
+  readonly ingestConcurrency: number;
   readonly prepUrlTemplate: string;
 }
 
@@ -55,6 +62,7 @@ function readConfig(): Config {
     port: numberFromEnv('PORT', DEFAULT_PORT, 0, 65_535),
     host: process.env.HOST ?? '127.0.0.1',
     ingestIntervalHours: numberFromEnv('INGEST_INTERVAL_HOURS', DEFAULT_INGEST_INTERVAL_HOURS, 0, 168),
+    ingestConcurrency: numberFromEnv('INGEST_CONCURRENCY', DEFAULT_INGEST_CONCURRENCY, 1, 32),
     prepUrlTemplate: process.env.WOW42_PREP_URL ?? 'https://wow42.tech/?job={jobUrl}',
   };
 }
@@ -73,6 +81,7 @@ async function ingest(config: Config, db: Db): Promise<void> {
     fetchBoard: createBoardFetcher(fetchJson),
     now: new Date().toISOString(),
     log,
+    concurrency: config.ingestConcurrency,
   });
   log(`Done: ${summary.boards - summary.failed}/${summary.boards} boards read, ${summary.inserted} new, ${summary.updated} edited, ${summary.closed} closed`);
 }
@@ -105,8 +114,28 @@ function serve(config: Config, db: Db): void {
   scheduleIngest(config, db);
 }
 
+async function discover(config: Config, namesPath: string | undefined): Promise<void> {
+  if (namesPath === undefined) throw new Error('Usage: node src/cli.ts discover <names.txt>');
+  const existing = loadCompanies(config.companiesPath);
+  const known = new Set(existing.map((company) => company.name.toLowerCase()));
+  const names = parseNameList(readFileSync(namesPath, 'utf8')).filter((name) => !known.has(name.toLowerCase()));
+  log(`Looking for boards of ${names.length} companies`);
+  const found = await discoverBoards({ names, fetchBoard: createBoardFetcher(fetchJson), log });
+  const merged = mergeCompanies(existing, found);
+  writeFileSync(config.companiesPath, `${JSON.stringify(merged, null, 2)}\n`);
+  log(`Added ${merged.length - existing.length} boards, ${merged.length} in ${config.companiesPath}`);
+}
+
+function writeReport(config: Config, db: Db): void {
+  const outPath = process.env.JOBS42_REPORT ?? 'reports/leads.csv';
+  const rows = buildLeadReport(db, loadCompanies(config.companiesPath), new Date().toISOString());
+  mkdirSync(dirname(outPath), { recursive: true });
+  writeFileSync(outPath, toCsv(rows));
+  log(`Wrote ${rows.length} companies to ${outPath}`);
+}
+
 async function main(command: string | undefined): Promise<void> {
-  if (command !== 'ingest' && command !== 'serve' && command !== 'export') {
+  if (command === undefined || !COMMANDS.has(command)) {
     process.stdout.write(`${USAGE}\n`);
     process.exitCode = command === undefined ? 0 : 1;
     return;
@@ -115,6 +144,14 @@ async function main(command: string | undefined): Promise<void> {
   const db = openConfiguredDatabase(config);
   if (command === 'ingest') {
     await ingest(config, db);
+    return;
+  }
+  if (command === 'discover') {
+    await discover(config, process.argv[3]);
+    return;
+  }
+  if (command === 'report') {
+    writeReport(config, db);
     return;
   }
   if (command === 'export') {

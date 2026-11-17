@@ -1,0 +1,404 @@
+# US tech companies to look up on Greenhouse, Lever and Ashby. One name per line.
+# Generic one-word names (Current, Front, Box...) are left out: their slugs often belong to another company.
+# Infrastructure and developer tools
+HashiCorp
+Kong
+Postman
+CircleCI
+Buildkite
+Harness
+JFrog
+Snyk
+Chainguard
+Teleport
+Sourcegraph
+Netlify
+LaunchDarkly
+Honeycomb
+Cribl
+Redpanda
+Confluent
+Aiven
+Fivetran
+dbt Labs
+Astronomer
+Prefect
+Dagster Labs
+Fly.io
+Northflank
+Chronosphere
+Neon
+Turso
+Upstash
+Akamai
+DigitalOcean
+Vultr
+Equinix
+Mux
+Livepeer
+Agora
+LiveKit
+Backblaze
+Wasabi
+incident.io
+FireHydrant
+Rootly
+Splunk
+Sumo Logic
+Mezmo
+Lightstep
+Kentik
+Arista
+Nutanix
+NetApp
+Veeam
+Druva
+Sentry
+GitHub
+Atlassian
+Coder
+Gitpod
+Depot
+Earthly
+Pulumi
+Spacelift
+env0
+Port
+Cortex
+OpsLevel
+Grafana
+Kubecost
+Solo.io
+Isovalent
+Tetrate
+Buoyant
+Akuity
+Codefresh
+Komodor
+Rafay
+Mirantis
+SUSE
+Canonical
+Red Hat
+# Fintech and crypto
+Marqeta
+Mercury
+Betterment
+Acorns
+MoneyLion
+Varo
+Navan
+Bill.com
+Bolt
+Checkout.com
+Rapyd
+Modern Treasury
+Synctera
+Treasury Prime
+Lithic
+Highnote
+Alloy
+Socure
+Sardine
+Persona
+Middesk
+AngelList
+Addepar
+iCapital
+Payoneer
+Remitly
+Wise
+Nium
+Anchorage Digital
+Circle
+Consensys
+OpenSea
+Chainlink Labs
+Aptos Labs
+Mysten Labs
+Solana Labs
+Flashbots
+Credit Karma
+NerdWallet
+LendingClub
+Upstart
+Dave Inc
+Chime
+Stash
+Public.com
+Tastytrade
+Webull
+Apex Fintech Solutions
+Galileo
+Paystand
+Melio
+Tipalti
+Airwallex
+Gemini
+Kraken
+Blockchain.com
+BitGo
+Paxos
+Ripple Labs
+Uniswap Labs
+dYdX
+Phantom
+MoonPay
+Zero Hash
+# Business software
+Samsara
+Motive
+Verkada
+Rippling
+Deel
+Lattice
+Culture Amp
+Greenhouse
+Outreach
+Salesloft
+Clari
+Highspot
+Seismic
+Amplitude
+Heap
+FullStory
+LogRocket
+Braze
+Iterable
+Klaviyo
+Attentive
+Postscript
+Yotpo
+Sprout Social
+Intercom
+Zendesk
+Freshworks
+Sendbird
+Stream.io
+Ably
+Bandwidth
+Telnyx
+Plivo
+Smartsheet
+ClickUp
+Coda
+Miro
+Loom
+Calendly
+Retool
+Glean
+Writer
+Hebbia
+Abridge
+Tempus
+Flatiron Health
+Komodo Health
+Zocdoc
+Devoted Health
+Cityblock Health
+Hims & Hers
+Headway
+Spring Health
+Lyra Health
+Included Health
+Garner Health
+Cedar
+Commure
+Athelas
+Toast
+Procore
+ServiceTitan
+Gusto
+Justworks
+Paylocity
+Workrise
+Flexport
+project44
+FourKites
+Convoy
+Shippo
+EasyPost
+ShipBob
+Stord
+# Security
+Orca Security
+Arctic Wolf
+Expel
+Huntress
+Drata
+Secureframe
+Tines
+Torq
+Material Security
+Semgrep
+Socket
+Endor Labs
+Cyera
+Axonius
+Netskope
+Illumio
+Auth0
+Stytch
+Clerk
+WorkOS
+Descope
+Transmit Security
+BeyondTrust
+Keeper Security
+Bitwarden
+Dashlane
+Ironclad
+Chainalysis
+Lookout
+Cloudsmith
+Vercara
+Imprivata
+Exabeam
+Securonix
+Cybereason
+Coalition
+At-Bay
+# Data and AI
+Labelbox
+Snorkel AI
+Weights & Biases
+Hugging Face
+Anyscale
+Together AI
+Fireworks AI
+Character AI
+Runway
+Pinecone
+Weaviate
+Qdrant
+Chroma
+Zilliz
+MotherDuck
+Sigma Computing
+ThoughtSpot
+Hightouch
+RudderStack
+Monte Carlo
+Atlan
+Alation
+Collibra
+Neo4j
+Couchbase
+Redis
+Aerospike
+Timescale
+InfluxData
+QuestDB
+StarTree
+Tecton
+Vast Data
+Weka
+CoreWeave
+Groq
+Cerebras
+SambaNova
+Etched
+Tenstorrent
+SiFive
+Mistral AI
+xAI
+Inflection AI
+Adept
+Sierra
+Decagon
+Cognition
+Magic
+Poolside
+Augment Code
+Codeium
+Tabnine
+Vapi
+Deepgram
+AssemblyAI
+Speechmatics
+Clay
+Unstructured
+LlamaIndex
+LangChain
+Arize AI
+Fiddler AI
+Galileo AI
+Humanloop
+# Consumer and marketplaces
+Etsy
+Chewy
+Poshmark
+ThredUp
+StockX
+GOAT
+Whatnot
+Thumbtack
+TaskRabbit
+Care.com
+Gopuff
+Shipt
+Snap
+Quora
+Medium
+Substack
+Patreon
+Strava
+Calm
+Headspace
+Noom
+Quizlet
+Course Hero
+Chegg
+Coursera
+Udemy
+MasterClass
+Canva
+Wix
+GoDaddy
+Yelp
+Zillow
+Redfin
+Opendoor
+Compass
+Houzz
+Angi
+Turo
+Getaround
+Cruise
+Aurora Innovation
+Nuro
+Kodiak Robotics
+Gatik
+Waabi
+Applied Intuition
+Anduril
+Shield AI
+Skydio
+Saronic
+Hadrian
+Relativity Space
+Rocket Lab
+Planet Labs
+Astranis
+Varda Space
+Niantic
+Scopely
+Bungie
+Roblox
+Asana
+Samsara
+SeatGeek
+Vivid Seats
+Eventbrite
+Hinge
+Bumble
+Tinder
+Grindr
+Twitch
+Kickstarter
+Indiegogo
+DraftKings
+FanDuel
+PrizePicks
+Underdog Fantasy
+Sleeper

@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "ingest": "node src/cli.ts ingest",
     "serve": "node src/cli.ts serve",
-    "export": "node src/cli.ts export"
+    "export": "node src/cli.ts export",
+    "discover": "node src/cli.ts discover discovery/candidates.txt",
+    "report": "node src/cli.ts report"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
